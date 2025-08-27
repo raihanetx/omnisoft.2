@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ChevronLeftIcon } from './icons/ChevronLeftIcon';
+import { ChevronRightIcon } from './icons/ChevronRightIcon';
 
 const projects = [
   {
@@ -32,7 +34,17 @@ const projects = [
 ];
 
 const Work: React.FC = () => {
-    const [activeProject, setActiveProject] = useState(projects[0]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) => (prevIndex === 0 ? projects.length - 1 : prevIndex - 1));
+    };
+
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) => (prevIndex === projects.length - 1 ? 0 : prevIndex + 1));
+    };
+
+    const activeProject = projects[currentIndex];
 
     return (
         <section id="work" className="py-20 md:py-28 bg-transparent">
@@ -44,85 +56,52 @@ const Work: React.FC = () => {
                      </p>
                 </div>
 
-                {/* Desktop Layout */}
-                <div className="hidden lg:grid lg:grid-cols-2 gap-16 items-start">
-                    {/* Left Column: Project Details with Accordion */}
-                    <div className="flex flex-col">
-                        {projects.map((project) => (
-                            <div
-                                key={project.title}
-                                onMouseEnter={() => setActiveProject(project)}
-                                className="group cursor-pointer border-t border-slate-700 py-8 first:border-t-0"
-                            >
-                                <div className="flex justify-between items-center">
-                                  <div>
-                                    <p className={`text-sm font-semibold mb-1 transition-colors duration-300 ${activeProject.title === project.title ? 'text-blue-400' : 'text-slate-400'}`}>
-                                        {project.category}
-                                    </p>
-                                    <h3 className={`text-2xl font-bold transition-colors duration-300 ${activeProject.title === project.title ? 'text-slate-100' : 'text-slate-500 group-hover:text-slate-200'}`}>
-                                        {project.title}
-                                    </h3>
-                                  </div>
-                                  <span className={`text-slate-500 transition-all duration-300 transform -rotate-45 group-hover:rotate-0 text-2xl ${activeProject.title === project.title ? 'text-slate-200 rotate-0' : ''}`}>»</span>
-                                </div>
-
-                                <div className={`grid overflow-hidden transition-all duration-500 ease-in-out ${activeProject.title === project.title ? 'grid-rows-[1fr] opacity-100 pt-4' : 'grid-rows-[0fr] opacity-0'}`}>
-                                    <div className="overflow-hidden">
-                                        <p className={`text-slate-400 leading-relaxed mb-4 transition-all duration-300 ease-out ${activeProject.title === project.title ? 'opacity-100 translate-y-0 delay-200' : 'opacity-0 translate-y-4'}`}>
-                                            {project.description}
-                                        </p>
-                                        <div className="flex flex-wrap gap-2">
-                                            {project.tags.map((tag, i) => (
-                                                <span 
-                                                    key={tag} 
-                                                    className={`bg-slate-800 text-slate-200 px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 ease-out ${activeProject.title === project.title ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-                                                    style={{ transitionDelay: activeProject.title === project.title ? `${300 + i * 50}ms` : '0ms' }}
-                                                >
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Right Column: Project Image */}
-                    <div className="sticky top-32 h-[600px]">
-                        <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl shadow-black/30 bg-slate-900/70 border border-slate-700">
-                            <div className="absolute inset-0">
-                                {projects.map((project) => (
+                <div className="relative max-w-5xl mx-auto">
+                    {/* Main Project Display */}
+                    <div className="bg-slate-900/50 border border-slate-700 rounded-2xl overflow-hidden shadow-lg p-6 md:p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                            <div className="relative w-full h-80 rounded-lg overflow-hidden shadow-md bg-slate-800">
+                                {projects.map((project, index) => (
                                     <img
                                         key={project.title}
                                         src={project.image}
                                         alt={project.title}
-                                        className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-in-out ${activeProject.title === project.title ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+                                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out ${index === currentIndex ? 'opacity-100' : 'opacity-0'}`}
                                     />
                                 ))}
                             </div>
-                             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Mobile & Tablet Layout */}
-                <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {projects.map(project => (
-                        <div key={project.title} className="bg-slate-900/50 border border-slate-700 rounded-2xl overflow-hidden shadow-lg transition-transform duration-300 hover:-translate-y-1.5">
-                            <img src={project.image} alt={project.title} className="w-full h-60 object-cover" />
-                            <div className="p-6">
-                                <p className="text-blue-400 text-sm font-semibold mb-1">{project.category}</p>
-                                <h3 className="text-xl font-bold text-slate-100 mb-2">{project.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed mb-4">{project.description}</p>
+                            <div className="flex flex-col justify-center">
+                                <p className="text-blue-400 text-sm font-semibold mb-2">{activeProject.category}</p>
+                                <h3 className="text-2xl md:text-3xl font-bold text-slate-100 mb-3">{activeProject.title}</h3>
+                                <p className="text-slate-400 leading-relaxed mb-5">{activeProject.description}</p>
                                 <div className="flex flex-wrap gap-2">
-                                    {project.tags.map(tag => (
-                                        <span key={tag} className="bg-slate-800 text-slate-300 px-3 py-1 rounded-full text-xs font-medium">{tag}</span>
+                                    {activeProject.tags.map(tag => (
+                                        <span key={tag} className="bg-slate-800 text-slate-200 px-3 py-1 rounded-full text-xs font-medium">{tag}</span>
                                     ))}
                                 </div>
                             </div>
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <button onClick={handlePrev} className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-16 bg-slate-700/50 hover:bg-slate-700 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm z-10">
+                        <ChevronLeftIcon className="h-6 w-6" />
+                    </button>
+                    <button onClick={handleNext} className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-16 bg-slate-700/50 hover:bg-slate-700 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm z-10">
+                        <ChevronRightIcon className="h-6 w-6" />
+                    </button>
+
+                    {/* Indicators */}
+                    <div className="flex justify-center mt-8 space-x-3">
+                        {projects.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentIndex(index)}
+                                className={`w-3 h-3 rounded-full transition-colors duration-300 ${currentIndex === index ? 'bg-blue-500' : 'bg-slate-600 hover:bg-slate-500'}`}
+                                aria-label={`Go to project ${index + 1}`}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
